@@ -1,0 +1,11 @@
+#Trafic light simulator
+'''colour=str(input("ENTER THE COLOUR HERE: "))
+if(colour=='Red'):
+    print("Red means STOP")
+elif(colour=='Yellow'):
+    print("Yellow means Slow Down")
+elif(colour=='Green'):
+    print('Green means GO')
+else:
+    print("INVALID COLOUR")'''
+    
