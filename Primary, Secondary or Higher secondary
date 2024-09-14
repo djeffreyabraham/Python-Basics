@@ -1,0 +1,11 @@
+#Primary, Secondary or Higher Secondary
+std=int(input('Enter your Grade Here: '))
+if(std<6):
+    print("You are Primary.")
+else:
+    if(std<=8):
+        print("you are Secondary")
+    elif(std<=12):
+        print('you are Higher Secondary')
+    else:
+        print('invalid number')
