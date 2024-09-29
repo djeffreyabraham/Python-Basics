@@ -1,0 +1,70 @@
+import pygame
+import random
+
+pygame.init()
+
+#screen dimensions
+screen_width = 750
+screen_hight = 400
+screen = pygame.display.set_mode((screen_width, screen_hight))
+
+#colours
+white = (255,255,255)
+black = (0 ,0 ,0)
+red = (255, 0, 0)
+
+#set the title
+pygame.display.set_caption("Catch The Falling Ball")
+
+#clock to control game speed
+clock = pygame.time.Clock()
+
+#Basket (Player) Dimensions
+basket_width = 100
+Basket_height = 20
+Basket_x = screen_width // 2 - basket_width // 2
+basket_y = screen_hight - basket_height - 10
+basket_speed = 7
+
+#ball dimensions
+ball_radius = 10
+ball_x = random.randint(0, screen_hight - ball_radius)
+ball_y = -ball_radius
+ball_speed = 5
+score = 0
+game_over = False
+font = pygame.font.Font(None, 36)
+
+def show_score():
+    text = font.render(f"score: {score}", True, black)
+    screen.blit(text, (10,10))
+while not game_over:
+    #Handle events'
+    for event in pygame.event.get():
+        if event.type:
+            game_over = True
+
+    #Get the Key Pressed for movement
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and basket_x > 0:
+        basket_x -= basket_speed
+    ball_y += ball_speed
+    if ball_y + ball_radius > basket_y and basket_x < ball_x <basket_x + basket_width:
+        score += 1
+        ball_x = random.randint(0,screen_width - ball_radius)
+        ball_y = ball_radius
+        ball_speed += 0.5
+    if ball_y > screen_hight:
+        game_over = True
+    screen.fill(white)
+    pygame.draw.rect(screen, black, (basket_x, Basket_y ,Basket_width, basket_height))
+    pygame.draw.circle(screen, red, (ball_x, ball_y), ball_radius)
+    show_score()
+    pygame.display.flip()
+    clock.tick(60)
+screen.fill(white)
+text = font.render(f"Game Over! Final Score: {score}", True, red)
+screen.blit(text, (screen_width // 4, screen_hight // 2))
+pygame.display.flip()
+pygame.time.wait(3000)
+pygame.quit()
