@@ -1,0 +1,75 @@
+import cv2
+from tkinter import *
+from PIL import Image, ImageTk
+import emoji
+
+class EmojiPickerApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Emoji Picker with Photo Capture")
+        
+        # Webcam setup
+        self.cap = cv2.VideoCapture(0)
+        
+        # GUI Components
+        self.create_widgets()
+
+    def create_widgets(self):
+        # Webcam preview
+        self.video_frame = Label(self.root)
+        self.video_frame.grid(row=0, column=0, columnspan=2)
+        self.update_frame()
+
+        # Capture button
+        self.capture_button = Button(self.root, text="Take Photo", command=self.capture_photo)
+        self.capture_button.grid(row=1, column=0, columnspan=2)
+
+        # Emoji selection
+        self.emoji_var = StringVar(value="😀")
+        emoji_list = ["😀", "😂", "😍", "😎", "😢", "🤔"]
+        self.emoji_menu = OptionMenu(self.root, self.emoji_var, *emoji_list)
+        self.emoji_menu.grid(row=2, column=0)
+
+        # Show selected emoji and name
+        self.display_frame = Frame(self.root)
+        self.display_frame.grid(row=3, column=0, columnspan=2)
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.video_frame.imgtk = imgtk
+            self.video_frame.configure(image=imgtk)
+        self.root.after(10, self.update_frame)
+
+    def capture_photo(self):
+        ret, frame = self.cap.read()
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            self.display_photo(frame)
+
+    def display_photo(self, frame):
+        # Display captured photo
+        img = Image.fromarray(frame)
+        imgtk = ImageTk.PhotoImage(image=img)
+        Label(self.display_frame, image=imgtk).grid(row=0, column=0)
+        
+        # Display selected emoji and name
+        selected_emoji = self.emoji_var.get()
+        emoji_label = Label(self.display_frame, text=selected_emoji, font=("Arial", 40))
+        emoji_label.grid(row=0, column=1)
+        
+        emoji_name = Label(self.display_frame, text=emoji.demojize(selected_emoji))
+        emoji_name.grid(row=1, column=1)
+
+    def close(self):
+        self.cap.release()
+        self.root.destroy()
+
+if __name__ == "__main__":
+    root = Tk()
+    app = EmojiPickerApp(root)
+    root.protocol("WM_DELETE_WINDOW", app.close)
+    root.mainloop()
